@@ -193,6 +193,21 @@ app.get('/listausuarios', async (req, res) => {
     }
 });
 
+// --- 7.1 RUTA PARA OBTENER USUARIOS INACTIVOS ---
+app.get('/usuariosinactivos', async (req, res) => {
+    try {
+        const query = 'SELECT id, nombre, usuario, rol FROM usuarios WHERE activo = false ORDER BY id DESC';
+        const resultado = await pool.query(query);
+        res.json({
+            success: true,
+            datos: resultado.rows
+        });
+    } catch (error) {
+        console.error("Error en UsuariosInactivos:", error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // -- 8 Actualizar usuario en el panel de usuarios (SOLO ADMIN) ---
 app.put('/actualizarusuario', async (req,res) =>{
     try {
@@ -214,6 +229,26 @@ app.put('/eliminarusuario', async(req,res) =>{
         res.json({success: true, mensaje: 'Usuario eliminado con éxito'})
     } catch (error) {
         console.error('Error al eliminar usuario:', error.message);
+        res.status(500).json({success: false, error: error.message})
+    }
+})
+
+app.put('/reactivarusuario', async(req,res) =>{
+    try{
+        const {id} = req.body;
+        console.log('--- Intentando reactivar usuario ---');
+        console.log('ID recibido:', id);
+        
+        if (!id) {
+            console.log('❌ Error: No se recibió ID');
+            return res.status(400).json({ success: false, mensaje: 'ID de usuario no proporcionado' });
+        }
+
+        const query = 'UPDATE usuarios SET activo = true WHERE id = $1';
+        await pool.query(query, [id]);
+        res.json({success: true, mensaje: 'Usuario reactivado con éxito'})
+    } catch (error) {
+        console.error('Error al reactivar usuario:', error.message);
         res.status(500).json({success: false, error: error.message})
     }
 })

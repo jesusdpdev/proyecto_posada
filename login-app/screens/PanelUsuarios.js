@@ -125,11 +125,11 @@ export default function PanelUsuarios() {
 
                 <FlatList
                     data={usuarios}
-                    keyExtractor={(item) => item.id_usuario?.toString() || item.id?.toString() || Math.random().toString()}
+                    keyExtractor={(item) => item.id?.toString() || item.id?.toString() || Math.random().toString()}
                     renderItem={({ item }) => (
                         <View style={styles.containerCard}>
                             <View style={styles.colNombre}>
-                                <Text style={styles.textoInfo} numberOfLines={1}><b>Nombre:</b> {item.nombre_usuario || item.nombre || 'Usuario'} </Text>
+                                <Text style={styles.textoInfo} numberOfLines={1}><b>Nombre:</b> {item.nombre || 'Usuario'} </Text>
                             </View>
                             <View style={styles.colRol}>
                                 <Text style={styles.textoRol} numberOfLines={1}><b>Rol:</b> {item.rol || 'Sin rol'}</Text>

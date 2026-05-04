@@ -12,6 +12,7 @@ import CrearLuzAgua from './screens/CrearLuzAgua';
 import Registro from './screens/Registro'; // <--- Agregamos esta importación
 import HistorialAccesos from './screens/HistorialAccesos';
 import PanelUsuarios from './screens/PanelUsuarios';
+import MostrarUsuariosInactivos from './screens/MostrarUsuariosInactivos';
 import { StackScreen } from 'react-native-screens';
 
 const Stack = createStackNavigator();
@@ -24,21 +25,20 @@ export default function App() {
           initialRouteName="Login"
           screenOptions={({ navigation }) => ({
             headerTintColor: 'white',
-            headerTitleAlign: 'center',
             headerStyle: { 
               backgroundColor: '#525FE1',
               elevation: 0,
               shadowOpacity: 0,
-            },
-            headerTitleStyle: {
-              fontWeight: 'bold',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             },
             headerRight: () => (
               <TouchableOpacity 
                 onPress={() => navigation.replace('Login')}
-                style={{ marginRight: 15, backgroundColor: 'rgba(255,255,255,0.2)', padding: 6, borderRadius: 8 }}
+                style={{ marginRight: 15, backgroundColor: 'rgba(255,255,255,0.2)', padding: 6, borderRadius: 20 }}
               >
-                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 12 }}>SALIR</Text>
+                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}>Cerrar Sesión</Text>
               </TouchableOpacity>
             ),
           })}
@@ -96,6 +96,15 @@ export default function App() {
           component={PanelUsuarios}
           options={{
             title: 'Panel de Usuarios',
+            headerRight: null
+          }}
+          />
+
+          <Stack.Screen 
+          name="MostrarUsuariosInactivos"
+          component={MostrarUsuariosInactivos}
+          options={{
+            title: 'Usuarios Inactivos',
             headerRight: null
           }}
           />

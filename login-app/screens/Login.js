@@ -63,8 +63,6 @@ export default function Login({ navigation }) {
                     <Text style={styles.btnText}>INGRESAR</Text>
                 </TouchableOpacity>
             </View>
-
-            <Text style={styles.footerText}>Sistema de Control Interno v1.0</Text>
         </SafeAreaView>
     );
 }

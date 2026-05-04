@@ -13,8 +13,8 @@ export default function Admin({ route, navigation }) {
                 {/* Sección de bienvenida */}
                 <View style={styles.header}>
                     <Text style={styles.titulo}>Panel Administrativo</Text>
-                    <Text style={styles.subtitulo}>Bienvenido, <b>{nombreUsuario || 'Usuario'}</b></Text>
-                    <Text style={styles.subtitulo}>Ultima conexion: {new Date().toLocaleString()}</Text>
+                    <Text style={styles.subtitulo}>Bienvenido, <Text style={{fontWeight: 'bold'}}>{nombreUsuario || 'Usuario'}</Text></Text>
+                    <Text style={styles.subtitulo}>Última conexión: {new Date().toLocaleString()}</Text>
                 </View>
 
                 {/* Botón para el registro de servicios */}
@@ -76,6 +76,21 @@ export default function Admin({ route, navigation }) {
                     </View>
                 </TouchableOpacity>
 
+                {/* NUEVO BOTÓN: Usuarios Inactivos */}
+                <TouchableOpacity 
+                    style={[styles.boton, { marginTop: 20, backgroundColor: '#0b8891ff' }]} 
+                    onPress={() => navigation.navigate('MostrarUsuariosInactivos')} 
+                    activeOpacity={0.7}
+                >
+                    <View style={styles.circuloIcono}>
+                        <Text style={styles.icono}>🚫</Text> 
+                    </View>
+                    <View>
+                        <Text style={styles.textoBoton}>Usuarios Inactivos</Text>
+                        <Text style={styles.textoSecundario}>Personal dado de baja</Text>
+                    </View>
+                </TouchableOpacity>
+
             </ScrollView>
 
             <Text style={styles.footerText}>Posada Villa Montaña - Software Informático</Text>
@@ -96,7 +111,7 @@ const styles = StyleSheet.create({
     titulo: { 
         fontSize: 26, 
         fontWeight: 'bold', 
-        color: '#2c3e50' 
+        color: '#2c3e50', 
     },
     subtitulo: { 
         fontSize: 16, 
