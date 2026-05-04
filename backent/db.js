@@ -1,10 +1,11 @@
+require('dotenv').config();
 const { Pool } = require('pg');
 
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'postgres', // El nombre que le pusimos en pgAdmin
-    password: 'jesus1210', //clave de la base de datos
+    database: 'posada_mantenimiento', // Base de datos del proyecto
+    password: process.env.DB_PASSWORD, //clave de la base de datos
     port: 5432,
     allowExitOnIdle: false,
 });

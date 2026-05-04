@@ -181,7 +181,7 @@ app.post('/crearusuario', async (req, res) => {
 // --- 7. RUTA PARA OBTENER LISTA DE USUARIOS (SIN CLAVE) ---
 app.get('/listausuarios', async (req, res) => {
     try {
-        const query = 'SELECT id, nombre, usuario, rol FROM usuarios ORDER BY id DESC';
+        const query = 'SELECT id, nombre, usuario, rol FROM usuarios WHERE activo = true ORDER BY id DESC';
         const resultado = await pool.query(query);
         res.json({
             success: true,
@@ -193,8 +193,33 @@ app.get('/listausuarios', async (req, res) => {
     }
 });
 
+// -- 8 Actualizar usuario en el panel de usuarios (SOLO ADMIN) ---
+app.put('/actualizarusuario', async (req,res) =>{
+    try {
+        const {id, nombre, rol} = req.body;
+        const query = 'UPDATE usuarios SET nombre = $2, rol = $3 WHERE id = $1';
+        await pool.query(query, [id, nombre, rol]);
+        res.json({success: true, mensaje: 'Usuario actualizado con éxito'})
+    } catch (error) {
+        console.error('Error al actualizar el usuario:', error.message);
+        res.status(500).json({success: false, error: error.message})
+    }
+})
+
+app.put('/eliminarusuario', async(req,res) =>{
+    try{
+        const {id} = req.body;
+        const query = 'UPDATE usuarios SET activo = false WHERE id = $1';
+        await pool.query(query, [id]);
+        res.json({success: true, mensaje: 'Usuario eliminado con éxito'})
+    } catch (error) {
+        console.error('Error al eliminar usuario:', error.message);
+        res.status(500).json({success: false, error: error.message})
+    }
+})
+
 // Configuración del puerto y arranque
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001; 
 const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`
 ==========================================
