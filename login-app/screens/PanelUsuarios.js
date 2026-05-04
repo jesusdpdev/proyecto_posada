@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
+    TextInput,
     StyleSheet,
     FlatList,
     ActivityIndicator,
@@ -22,16 +23,22 @@ export default function PanelUsuarios() {
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
     const [eliminarUsuario, setEliminarUsuario] = useState(false);
     const [actualizarUsuario, setActualizarUsuario] = useState(false);
+    const [nombreEdit, setNombreEdit] = useState('');
+    const [rolEdit, setRolEdit] = useState('');
 
 
     //Funciones
 
-    const modalFuncion = (usuario = null) => {
+    const modalFuncionEliminar = (usuario = null) => {
         setUsuarioSeleccionado(usuario);
         setModalVisible(!modalVisible);
     }
 
     const modalFuncionActualizar = (usuario = null) => {
+        if (usuario) {
+            setNombreEdit(usuario.nombre || '');
+            setRolEdit(usuario.rol || '');
+        }
         setUsuarioSeleccionado(usuario);
         setActualizarUsuario(!actualizarUsuario);
     }
@@ -40,9 +47,9 @@ export default function PanelUsuarios() {
         if (!usuarioSeleccionado) return;
         try {
             const url = 'http://192.168.0.108:3001/eliminarusuario';
-            const response = await axios.delete(url, { params: { id_usuario: usuarioSeleccionado.id_usuario } });
+            const response = await axios.put(url, { id: usuarioSeleccionado.id });
             if (response.data.success) {
-                modalFuncion(null);
+                modalFuncionEliminar(null);
                 setEliminarUsuario(!eliminarUsuario);
                 obtenerUsuarios();
             }
@@ -57,12 +64,12 @@ export default function PanelUsuarios() {
         try {
             const url = 'http://192.168.0.108:3001/actualizarusuario';
             const response = await axios.put(url, {
-                id_usuario: usuarioSeleccionado.id_usuario,
-                nombre_usuario: usuarioSeleccionado.nombre_usuario,
-                rol: usuarioSeleccionado.rol
+                id: usuarioSeleccionado.id,
+                nombre: nombreEdit,
+                rol: rolEdit
             });
             if (response.data.success) {
-                modalFuncion(null);
+                modalFuncionActualizar(null);
                 setActualizarUsuario(false);
                 obtenerUsuarios();
             }
@@ -128,7 +135,7 @@ export default function PanelUsuarios() {
                                 <Text style={styles.textoRol} numberOfLines={1}><b>Rol:</b> {item.rol || 'Sin rol'}</Text>
                             </View>
                             <View style={styles.colIconos}>
-                                <TouchableOpacity onPress={() => modalFuncion(item)} style={{ marginRight: 15 }}>
+                                <TouchableOpacity onPress={() => modalFuncionEliminar(item)} style={{ marginRight: 15 }}>
                                     <FontAwesome5 name="trash" size={24} color="#e74c3c" solid />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => modalFuncionActualizar(item)} style={{ marginRight: 15 }}>
@@ -150,7 +157,7 @@ export default function PanelUsuarios() {
                 />
             )}
 
-            {/* Modal de Confirmación */}
+            {/* Modal de Eliminar */}
             <Modal
                 animationType="fade"
                 transparent={true}
@@ -161,10 +168,10 @@ export default function PanelUsuarios() {
                     <View style={styles.modalView}>
                         <Text style={styles.modalTitle}>Confirmar eliminación</Text>
                         <Text style={styles.modalText}>
-                            ¿Estás seguro de que deseas eliminar a {usuarioSeleccionado?.nombre_usuario || usuarioSeleccionado?.nombre || 'este usuario'}?
+                            ¿Estás seguro de que deseas eliminar a {usuarioSeleccionado?.nombre || usuarioSeleccionado?.nombre || 'este usuario'}?
                         </Text>
                         <View style={styles.modalBotones}>
-                            <TouchableOpacity style={[styles.botonModal, styles.botonCancelar]} onPress={() => modalFuncion(null)}>
+                            <TouchableOpacity style={[styles.botonModal, styles.botonCancelar]} onPress={() => modalFuncionEliminar(null)}>
                                 <Text style={styles.textoBotonModal}>Cancelar</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.botonModal, styles.botonEliminar]} onPress={fEliminarUsuario}>
@@ -177,17 +184,42 @@ export default function PanelUsuarios() {
 
             {/* Modal de Actualización */}
             <Modal
-                animationType="fade"
+                animationType="slide"
                 transparent={true}
                 visible={actualizarUsuario}
                 onRequestClose={() => modalFuncionActualizar(null)}
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalView}>
-                        <Text style={styles.modalTitle}>Confirmar actualización</Text>
-                        <Text style={styles.modalText}>
-                            ¿Estás seguro de que deseas actualizar a {usuarioSeleccionado?.nombre_usuario || usuarioSeleccionado?.nombre || 'este usuario'}?
+                        <Text style={styles.label}>
+                            Nombre:
                         </Text>
+                        <TextInput style={styles.input} value={nombreEdit || ''} onChangeText={setNombreEdit} />
+                        <Text style={styles.label}>
+                            Seleccionar rol:
+                        </Text>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginVertical: 10 }}>
+                            <TouchableOpacity onPress={() => setRolEdit('admin')} style={{
+                                backgroundColor: rolEdit === 'admin' ? '#3498db' : '#131313ff',
+                                padding: 10,
+                                borderRadius: 8,
+                                marginRight: 10,
+                                width: 'auto',
+                                alignItems: 'center'
+                            }}>
+                                <Text style={styles.textoBotonModalBlanco}>Admin</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => setRolEdit('mantenimiento')} style={{
+                                backgroundColor: rolEdit === 'mantenimiento' ? '#3498db' : '#131313ff',
+                                padding: 10,
+                                marginLeft: 10,
+                                borderRadius: 8,
+                                width: 'auto',
+                                alignItems: 'center'
+                            }}>
+                                <Text style={styles.textoBotonModalBlanco}>Mantenimiento</Text>
+                            </TouchableOpacity>
+                        </View>
                         <View style={styles.modalBotones}>
                             <TouchableOpacity style={[styles.botonModal, styles.botonCancelar]} onPress={() => modalFuncionActualizar(null)}>
                                 <Text style={styles.textoBotonModal}>Cancelar</Text>
@@ -261,6 +293,7 @@ const styles = StyleSheet.create({
     botonCancelar: { backgroundColor: '#ecf0f1' },
     botonEliminar: { backgroundColor: '#e74c3c' },
     textoBotonModal: { fontSize: 16, fontWeight: 'bold', color: '#2c3e50' },
-    textoBotonModalBlanco: { fontSize: 16, fontWeight: 'bold', color: '#ffffff' },
+    textoBotonModalBlanco: { fontSize: 16, fontWeight: 'bold', color: '#ffffff'},
     botonActualizar: { backgroundColor: '#3498db' },
+    input: { fontSize: 16, fontWeight: 'bold', color: '#2c3e50', backgroundColor: '#ecf0f1', padding: 10, borderRadius: 8, marginTop: 5, marginBottom: 10, borderColor: '#2c3e50', borderWidth: 1 },
 });
