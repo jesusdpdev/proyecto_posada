@@ -24,6 +24,10 @@ expo-env.d.ts
 #Contraseña
 *.env
 
+#Bases de datos
+*.app-movil-posada.sql
+*.base-posada.sql
+
 # debug
 npm-debug.*
 yarn-debug.*
